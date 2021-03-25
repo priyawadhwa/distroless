@@ -43,4 +43,6 @@ steps:
   env:
   - PROJECT_ID=${PROJECT_ID}
   - COMMIT_SHA=${COMMIT_SHA}
-  entrypoint: ./cloudbuild_cosign.sh
+  entrypoint: sh
+  args:
+  - ./cloudbuild_cosign.sh 
