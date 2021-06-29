@@ -238,7 +238,7 @@ container_push(
     image = "//nodejs:nodejs14_amd64_debian10",
     format = "Docker",
     registry = "gcr.io",
-    repository = "{PROJECT_ID}/node14_amd64",
+    repository = "{PROJECT_ID}/nodejs14_amd64",
     tag = "{COMMIT_SHA}",
 )
 
@@ -250,7 +250,7 @@ container_push(
     image = "//nodejs:nodejs14_arm64_debian10",
     format = "Docker",
     registry = "gcr.io",
-    repository = "{PROJECT_ID}/node14_arm64",
+    repository = "{PROJECT_ID}/nodejs14_arm64",
     tag = "{COMMIT_SHA}",
 )
 
