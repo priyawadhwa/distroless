@@ -230,12 +230,26 @@ container_push(
 # single container build for proevenance demo
 load("@io_bazel_rules_docker//container:container.bzl", "container_push")
 
-# should out a digest at bazel-bin/nodejs14_default.digest
+# bazel run //:nodejs14_amd64
+# should out a digest at bazel-bin/nodejs14_amd64.digest
 container_push(
-    name = "nodejs14_default",
+    name = "nodejs14_amd64",
+    image = "//nodejs:nodejs14_amd64_debian10",
+    format = "Docker",
+    registry = "gcr.io",
+    repository = "{PROJECT_ID}/node",
+    tag = "{COMMIT_SHA}",
+)
+
+# bazel run //:nodejs14_arm64
+# should out a digest at bazel-bin/nodejs14_arm64.digest
+container_push(
+    name = "nodejs14_arm64",
     image = "//nodejs:nodejs14_arm64_debian10",
     format = "Docker",
     registry = "gcr.io",
     repository = "{PROJECT_ID}/node",
     tag = "{COMMIT_SHA}",
 )
+
+
