@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: distroless-build-task
+  annotations:
+    description: |
+      Build distroless and push to gcr
+spec:
+  taskSpec:
+    resources:
+      inputs:
+        - name: source
+          type: git
+    steps:
+      - name: build-and-push
+        image: gcr.io/priya-wadhwa/distroless-builder
+        workingDir: /workspace/source
+        script: |
+          gcloud auth configure-docker
+          export PROJECT_ID=priya-wadhwa
+          export COMMIT_SHA=fill-me-in
+          bazel build //package_manager:dpkg_parser.par
+          bazel run //:publish-static
