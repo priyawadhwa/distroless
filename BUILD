@@ -226,3 +226,16 @@ container_push(
     # https://github.com/bazelbuild/rules_docker/issues/525
     sequential = True,
 )
+
+# single container build for proevenance demo
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+
+# should out a digest at bazel-bin/nodejs14_default.digest
+container_push(
+    name = "nodejs14_default",
+    image = "//nodejs:nodejs14_arm64_debian10",
+    format = "Docker",
+    registry = "gcr.io",
+    repository = "{PROJECT_ID}/node",
+    tag = "{COMMIT_SHA}",
+)
