@@ -1,19 +1,47 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: distroless-build-task
+  name: build-distroless
   annotations:
     description: |
-      A task that will run the build for this repo
+      Takes in the distroless repo as an input and builds & pushes distroless images.
 spec:
   resources:
     inputs:
       - name: source
         type: git
+  results:
+  - name: nodejs14_amd64_IMAGE_DIGEST
+  - name: nodejs14_amd64_IMAGE_URL
+  - name: nodejs14_arm64_IMAGE_DIGEST
+  - name: nodejs14_arm64_IMAGE_URL
+  params:
+    - name: PROJECT_ID
+      default: priya-wadhwa
+    - name: BAZEL_BUILD_ARGS
+      description: "comma separated list of bazel build args"
+      default: "nodejs14_amd64,nodejs14_arm64"
   steps:
-    - name: git-repo
-      image: ubuntu
+    - name: build-and-push-distroless
+      image: gcr.io/priya-wadhwa/distroless-builder-tkn
+      env:
+      - name: PROJECT_ID
+        value: $(params.PROJECT_ID)
       workingDir: /workspace/source
       script: |
-        ls
-        echo "This worked!"
+        #!/bin/sh
+        set -ex
+
+        gcloud auth configure-docker
+        export COMMIT_SHA=$(resources.inputs.source.revision)
+        bazel build //package_manager:dpkg_parser.par
+
+        for target in $(echo $(params.BAZEL_BUILD_ARGS) | sed "s/,/ /g")
+        do
+            echo "Building bazel target $target...."
+            bazel run //:$target
+
+            # save the image URL and digest 
+            echo gcr.io/$PROJECT_ID/$target | tee /tekton/results/${target}_IMAGE_URL
+            cat bazel-bin/$target.digest | tee /tekton/results/${target}_IMAGE_DIGEST
+        done
