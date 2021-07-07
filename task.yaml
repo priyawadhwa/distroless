@@ -17,8 +17,10 @@ spec:
   - name: nodejs14_arm64_IMAGE_URL
   params:
     - name: PROJECT_ID
+      type: string
       default: priya-wadhwa
     - name: BAZEL_BUILD_ARGS
+      type: string
       description: "comma separated list of bazel build args"
       default: "nodejs14_amd64,nodejs14_arm64"
   steps:
