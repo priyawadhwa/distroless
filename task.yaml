@@ -3,6 +3,7 @@ kind: Task
 metadata:
   name: build-distroless
   annotations:
+    chains.tekton.dev/reproducible: "true"
     description: |
       Takes in the distroless repo as an input and builds & pushes distroless images.
 spec:
