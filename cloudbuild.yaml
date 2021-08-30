@@ -5,7 +5,7 @@ options:
 
 steps:
 
-- name: python:3.9
+- name: ubuntu
   env:
   - PROJECT_ID=${PROJECT_ID}
   - COMMIT_SHA=${COMMIT_SHA}
@@ -17,21 +17,26 @@ steps:
     set -o errexit
     set -o xtrace
 
+    # Install python
+    apt-get update
+    apt-get install -y python3.9 python2.7
+    ln -s /usr/bin/python3.9 /usr/bin/python
+    python --version
+
+
     # Install bazel
     apt install -y apt-transport-https curl gnupg    
     curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
     mv bazel.gpg /etc/apt/trusted.gpg.d/
     echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
     apt update
-    apt install bazel-3.4.1
+    apt install -y bazel-3.4.1
     alias bazel=bazel-3.4.1
 
 
     # Check versions
-    python --version
     bazel --version
 
-    ln -s python /usr/bin/python2
 
     bazel build //package_manager:dpkg_parser.par
 
