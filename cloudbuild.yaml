@@ -16,11 +16,18 @@ steps:
     #!/bin/sh
     set -o errexit
     set -o xtrace
+    
+    # Upgrade python3 so that our images are reproducible
+    # Ref bug fix: https://github.com/python/cpython/pull/18080/files
+    apt-get update
+    apt-get upgrade -y python3 
 
     # Make sure python points to python3
     # perhaps the gcr.io/cloud-marketplace-containers/google/bazel image
     # should be doing this though
     update-alternatives --install /usr/bin/python python /usr/bin/python3 0
+
+    python --version
 
     bazel build //package_manager:dpkg_parser.par
 
