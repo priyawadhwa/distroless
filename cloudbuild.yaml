@@ -5,7 +5,7 @@ options:
 
 steps:
 
-- name: gcr.io/cloud-marketplace-containers/google/bazel:3.4.1
+- name: python:3.9
   env:
   - PROJECT_ID=${PROJECT_ID}
   - COMMIT_SHA=${COMMIT_SHA}
@@ -16,18 +16,20 @@ steps:
     #!/bin/sh
     set -o errexit
     set -o xtrace
-    
-    # Upgrade python3 so that our images are reproducible
-    # Ref bug fix: https://github.com/python/cpython/pull/18080/files
-    apt-get update
-    apt-get upgrade -y python3 
 
-    # Make sure python points to python3
-    # perhaps the gcr.io/cloud-marketplace-containers/google/bazel image
-    # should be doing this though
-    update-alternatives --install /usr/bin/python python /usr/bin/python3 0
+    # Install bazel
+    apt install -y apt-transport-https curl gnupg    
+    curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+    mv bazel.gpg /etc/apt/trusted.gpg.d/
+    echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list
+    apt update
+    apt install bazel-3.4.1
+    alias bazel=bazel-3.4.1
 
+
+    # Check versions
     python --version
+    bazel --version
 
     bazel build //package_manager:dpkg_parser.par
 
