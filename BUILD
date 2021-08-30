@@ -210,7 +210,7 @@ ALL.update(CC)
 
 ALL.update(PYTHON3)
 
-ALL.update(PYTHON27)
+
 
 ALL.update(NODEJS)
 
